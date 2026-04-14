@@ -330,17 +330,17 @@ func publishToTuya(st TankState, group TuyaMetricGroup) bool {
 		if st.LevelPercent != nil {
 			data["level_percent"] = toScaledInt(*st.LevelPercent, 1)
 		}
-		if st.DistanceCm != nil {
-			data["distance_cm"] = toScaledInt(*st.DistanceCm, 1)
-		}
+		//if st.DistanceCm != nil {
+		//	data["distance_cm"] = toScaledInt(*st.DistanceCm, 1)
+		//}
 
 	case TuyaGroupPressure:
 		if st.PressureMPa != nil {
 			data["pressure_mpa"] = toScaledInt(*st.PressureMPa, 3)
 		}
-		if st.PressureV != nil {
-			data["pressure_v"] = toScaledInt(*st.PressureV, 3)
-		}
+		//if st.PressureV != nil {
+		//	data["pressure_v"] = toScaledInt(*st.PressureV, 3)
+		//}
 
 	case TuyaGroupAll:
 		if st.PressureMPa != nil {
@@ -352,12 +352,12 @@ func publishToTuya(st TankState, group TuyaMetricGroup) bool {
 		if st.LevelPercent != nil {
 			data["level_percent"] = toScaledInt(*st.LevelPercent, 1)
 		}
-		if st.DistanceCm != nil {
-			data["distance_cm"] = toScaledInt(*st.DistanceCm, 1)
-		}
-		if st.PressureV != nil {
-			data["pressure_v"] = toScaledInt(*st.PressureV, 3)
-		}
+		//if st.DistanceCm != nil {
+		//	data["distance_cm"] = toScaledInt(*st.DistanceCm, 1)
+		//}
+		//if st.PressureV != nil {
+		//	data["pressure_v"] = toScaledInt(*st.PressureV, 3)
+		//}
 	}
 
 	if len(data) == 0 {
