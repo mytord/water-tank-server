@@ -110,7 +110,7 @@
               }
             ]
           },
-          "unit": "pressureMPa"
+          "unit": "suffix: MPa"
         },
         "overrides": []
       },
@@ -207,7 +207,7 @@
               }
             ]
           },
-          "unit": "pressureMPa"
+          "unit": "suffix: MPa"
         },
         "overrides": []
       },
