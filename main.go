@@ -8,6 +8,7 @@ import (
 	"encoding/json"
 	"fmt"
 	"log"
+	"net/http"
 	"os"
 	"os/signal"
 	"strconv"
@@ -17,6 +18,8 @@ import (
 
 	mqtt "github.com/eclipse/paho.mqtt.golang"
 	"github.com/joho/godotenv"
+	"github.com/prometheus/client_golang/prometheus"
+	"github.com/prometheus/client_golang/prometheus/promhttp"
 )
 
 const (
@@ -59,7 +62,48 @@ var (
 	tuyaDeviceID string
 	stateMu      sync.Mutex
 	tankState    TankState
+
+	distanceCmGauge = prometheus.NewGauge(prometheus.GaugeOpts{
+		Name: "water_tank_distance_cm",
+		Help: "Measured distance from the sensor to the water surface in centimeters.",
+	})
+	volumeLitersGauge = prometheus.NewGauge(prometheus.GaugeOpts{
+		Name: "water_tank_volume_liters",
+		Help: "Calculated water volume in liters.",
+	})
+	levelPercentGauge = prometheus.NewGauge(prometheus.GaugeOpts{
+		Name: "water_tank_level_percent",
+		Help: "Calculated water level percentage.",
+	})
+	pressureMPaGauge = prometheus.NewGauge(prometheus.GaugeOpts{
+		Name: "water_tank_pressure_mpa",
+		Help: "Measured pressure in megapascals.",
+	})
+	pressureVoltageGauge = prometheus.NewGauge(prometheus.GaugeOpts{
+		Name: "water_tank_pressure_voltage_volts",
+		Help: "Measured pressure sensor voltage in volts.",
+	})
+	sensorUptimeGauge = prometheus.NewGaugeVec(prometheus.GaugeOpts{
+		Name: "water_tank_sensor_uptime_ms",
+		Help: "Sensor-reported uptime in milliseconds.",
+	}, []string{"kind"})
+	lastMessageTimestampGauge = prometheus.NewGaugeVec(prometheus.GaugeOpts{
+		Name: "water_tank_last_message_timestamp_seconds",
+		Help: "Unix timestamp when the reader received the last sensor message.",
+	}, []string{"kind"})
 )
+
+func init() {
+	prometheus.MustRegister(
+		distanceCmGauge,
+		volumeLitersGauge,
+		levelPercentGauge,
+		pressureMPaGauge,
+		pressureVoltageGauge,
+		sensorUptimeGauge,
+		lastMessageTimestampGauge,
+	)
+}
 
 func main() {
 	log.SetFlags(log.LstdFlags | log.Lmicroseconds)
@@ -77,6 +121,7 @@ func main() {
 	password := os.Getenv("MQTT_PASSWORD")
 	topicLevel := getEnv("MQTT_TOPIC_LEVEL", "water_tank/level")
 	topicPressure := getEnv("MQTT_TOPIC_PRESSURE", "water_tank/pressure")
+	metricsAddr := getEnv("METRICS_ADDR", ":2112")
 
 	tuyaDeviceID = getEnv("TUYA_DEVICE_ID", "")
 	tuyaDeviceSecret := getEnv("TUYA_DEVICE_SECRET", "")
@@ -88,11 +133,14 @@ func main() {
 	log.Printf("config: broker=%s", broker)
 	log.Printf("config: topicLevel=%s", topicLevel)
 	log.Printf("config: topicPressure=%s", topicPressure)
+	log.Printf("config: metricsAddr=%s", metricsAddr)
 	log.Printf("config: username_set=%t password_set=%t", username != "", password != "")
 	log.Printf("tuya: host=%s port=%d deviceId_set=%t secret_set=%t",
 		tuyaHost, tuyaPort, tuyaDeviceID != "", tuyaDeviceSecret != "")
 	log.Printf("calibration: empty=%.1f cm full=%.1f cm max=%.1f L",
 		TankEmptyDistanceCm, TankFullDistanceCm, TankMaxVolumeLiters)
+
+	metricsServer := startMetricsServer(metricsAddr)
 
 	if tuyaDeviceID != "" && tuyaDeviceSecret != "" {
 		tuyaClient = newTuyaClient(tuyaDeviceID, tuyaDeviceSecret, tuyaHost, tuyaPort)
@@ -163,10 +211,31 @@ func main() {
 
 	log.Println("shutting down...")
 	client.Disconnect(250)
+	metricsServer.Close()
 
 	if tuyaClient != nil && tuyaClient.IsConnected() {
 		tuyaClient.Disconnect(250)
 	}
+}
+
+func startMetricsServer(addr string) *http.Server {
+	mux := http.NewServeMux()
+	mux.Handle("/metrics", promhttp.Handler())
+
+	server := &http.Server{
+		Addr:              addr,
+		Handler:           mux,
+		ReadHeaderTimeout: 5 * time.Second,
+	}
+
+	go func() {
+		log.Printf("metrics server listening on %s", addr)
+		if err := server.ListenAndServe(); err != nil && err != http.ErrServerClosed {
+			log.Printf("metrics server error: %v", err)
+		}
+	}()
+
+	return server
 }
 
 func handleLevelMessage(_ mqtt.Client, msg mqtt.Message) {
@@ -211,6 +280,7 @@ func handleLevelMessage(_ mqtt.Client, msg mqtt.Message) {
 	snapshot := copyStateLocked()
 	stateMu.Unlock()
 
+	updateLevelMetrics(payload, volumeLiters, levelPercent)
 	publishToTuya(snapshot, TuyaGroupLevel)
 }
 
@@ -247,7 +317,35 @@ func handlePressureMessage(_ mqtt.Client, msg mqtt.Message) {
 	snapshot := copyStateLocked()
 	stateMu.Unlock()
 
+	updatePressureMetrics(payload)
 	publishToTuya(snapshot, TuyaGroupPressure)
+}
+
+func updateLevelMetrics(payload LevelMessage, volumeLiters, levelPercent *float64) {
+	if payload.DistanceCm != nil {
+		distanceCmGauge.Set(*payload.DistanceCm)
+	}
+	if volumeLiters != nil {
+		volumeLitersGauge.Set(*volumeLiters)
+	}
+	if levelPercent != nil {
+		levelPercentGauge.Set(*levelPercent)
+	}
+
+	sensorUptimeGauge.WithLabelValues("level").Set(float64(payload.UptimeMs))
+	lastMessageTimestampGauge.WithLabelValues("level").Set(float64(time.Now().Unix()))
+}
+
+func updatePressureMetrics(payload PressureMessage) {
+	if payload.PressureMPa != nil {
+		pressureMPaGauge.Set(*payload.PressureMPa)
+	}
+	if payload.PressureV != nil {
+		pressureVoltageGauge.Set(*payload.PressureV)
+	}
+
+	sensorUptimeGauge.WithLabelValues("pressure").Set(float64(payload.UptimeMs))
+	lastMessageTimestampGauge.WithLabelValues("pressure").Set(float64(time.Now().Unix()))
 }
 
 func newTuyaClient(deviceID, deviceSecret, host string, port int) mqtt.Client {
