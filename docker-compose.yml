@@ -18,6 +18,8 @@ services:
       METRICS_ADDR: :2112
     depends_on:
       - mosquitto
+    ports:
+      - "2112:2112"
     restart: unless-stopped
 
   prometheus:
