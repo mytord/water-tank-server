@@ -1,0 +1,11 @@
+apiVersion: 1
+
+providers:
+  - name: Water Tank
+    orgId: 1
+    folder: Water Tank
+    type: file
+    disableDeletion: false
+    editable: true
+    options:
+      path: /etc/grafana/provisioning/dashboards
