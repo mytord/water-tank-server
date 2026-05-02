@@ -1,7 +1,6 @@
 services:
   mosquitto:
     image: eclipse-mosquitto:2
-    container_name: water-tank-mosquitto
     ports:
       - "1883:1883"
     volumes:
@@ -10,7 +9,6 @@ services:
 
   water-tank-reader:
     build: .
-    container_name: water-tank-reader
     env_file:
       - .env
     environment:
@@ -24,7 +22,6 @@ services:
 
   prometheus:
     image: prom/prometheus:v2.55.1
-    container_name: water-tank-prometheus
     ports:
       - "9090:9090"
     volumes:
@@ -36,7 +33,6 @@ services:
 
   grafana:
     image: grafana/grafana:11.4.0
-    container_name: water-tank-grafana
     ports:
       - "3000:3000"
     environment:
