@@ -62,11 +62,7 @@
       },
       "id": 1,
       "options": {
-        "colorMode": "value",
-        "graphMode": "area",
-        "justifyMode": "auto",
         "orientation": "auto",
-        "percentChangeColorMode": "standard",
         "reduceOptions": {
           "calcs": [
             "lastNotNull"
@@ -74,9 +70,8 @@
           "fields": "",
           "values": false
         },
-        "showPercentChange": false,
-        "textMode": "auto",
-        "wideLayout": true
+        "showThresholdLabels": false,
+        "showThresholdMarkers": true
       },
       "pluginVersion": "11.4.0",
       "targets": [
@@ -93,7 +88,7 @@
         }
       ],
       "title": "Tank level",
-      "type": "stat"
+      "type": "gauge"
     },
     {
       "datasource": {
@@ -115,7 +110,7 @@
               }
             ]
           },
-          "unit": "pressurembar"
+          "unit": "pressureMPa"
         },
         "overrides": []
       },
@@ -151,7 +146,7 @@
             "uid": "Prometheus"
           },
           "editorMode": "code",
-          "expr": "water_tank_pressure_mpa * 10000",
+          "expr": "water_tank_pressure_mpa",
           "legendFormat": "pressure",
           "range": true,
           "refId": "A"
@@ -212,7 +207,7 @@
               }
             ]
           },
-          "unit": "pressurembar"
+          "unit": "pressureMPa"
         },
         "overrides": []
       },
@@ -246,7 +241,7 @@
             "uid": "Prometheus"
           },
           "editorMode": "code",
-          "expr": "water_tank_pressure_mpa * 10000",
+          "expr": "water_tank_pressure_mpa",
           "legendFormat": "pressure",
           "range": true,
           "refId": "A"
