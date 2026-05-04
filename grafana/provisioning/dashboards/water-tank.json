@@ -31,7 +31,7 @@
           "color": {
             "mode": "thresholds"
           },
-          "max": 100,
+          "max": 12,
           "min": 0,
           "thresholds": {
             "mode": "absolute",
@@ -42,15 +42,15 @@
               },
               {
                 "color": "orange",
-                "value": 20
+                "value": 2.4
               },
               {
                 "color": "green",
-                "value": 50
+                "value": 6
               }
             ]
           },
-          "unit": "percent"
+          "unit": "suffix: L"
         },
         "overrides": []
       },
@@ -82,13 +82,13 @@
             "uid": "Prometheus"
           },
           "editorMode": "code",
-          "expr": "water_tank_level_percent",
-          "legendFormat": "level",
+          "expr": "water_tank_volume_liters",
+          "legendFormat": "volume",
           "range": true,
           "refId": "A"
         }
       ],
-      "title": "Tank level",
+      "title": "Tank volume",
       "type": "gauge"
     },
     {
@@ -296,7 +296,7 @@
               "mode": "off"
             }
           },
-          "max": 100,
+          "max": 12,
           "min": 0,
           "thresholds": {
             "mode": "absolute",
@@ -307,15 +307,15 @@
               },
               {
                 "color": "orange",
-                "value": 20
+                "value": 2.4
               },
               {
                 "color": "green",
-                "value": 50
+                "value": 6
               }
             ]
           },
-          "unit": "percent"
+          "unit": "suffix: L"
         },
         "overrides": []
       },
@@ -350,13 +350,13 @@
             "uid": "Prometheus"
           },
           "editorMode": "code",
-          "expr": "water_tank_level_percent",
-          "legendFormat": "level",
+          "expr": "water_tank_volume_liters",
+          "legendFormat": "volume",
           "range": true,
           "refId": "A"
         }
       ],
-      "title": "Level",
+      "title": "Volume",
       "type": "timeseries"
     },
     {
