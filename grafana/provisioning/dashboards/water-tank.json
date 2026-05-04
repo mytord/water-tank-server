@@ -58,7 +58,7 @@
         "h": 8,
         "w": 12,
         "x": 0,
-        "y": 0
+        "y": 4
       },
       "id": 1,
       "options": {
@@ -118,7 +118,7 @@
         "h": 8,
         "w": 12,
         "x": 12,
-        "y": 0
+        "y": 4
       },
       "id": 2,
       "options": {
@@ -373,7 +373,7 @@
               }
             ]
           },
-          "unit": "dateTimeAsIso"
+          "unit": "dateTimeFromNow"
         },
         "overrides": []
       },
@@ -381,7 +381,7 @@
         "h": 4,
         "w": 12,
         "x": 0,
-        "y": 8
+        "y": 0
       },
       "id": 5,
       "options": {
@@ -415,7 +415,7 @@
           "refId": "A"
         }
       ],
-      "title": "Last level message",
+      "title": "Level updated",
       "type": "stat"
     },
     {
@@ -437,7 +437,7 @@
               }
             ]
           },
-          "unit": "dateTimeAsIso"
+          "unit": "dateTimeFromNow"
         },
         "overrides": []
       },
@@ -445,7 +445,7 @@
         "h": 4,
         "w": 12,
         "x": 12,
-        "y": 8
+        "y": 0
       },
       "id": 6,
       "options": {
@@ -479,7 +479,7 @@
           "refId": "A"
         }
       ],
-      "title": "Last pressure message",
+      "title": "Pressure updated",
       "type": "stat"
     }
   ],
