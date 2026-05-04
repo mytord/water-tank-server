@@ -49,23 +49,6 @@ services:
       - prometheus
     restart: unless-stopped
 
-  caddy:
-    image: caddy:2.8
-    ports:
-      - "80:80"
-      - "443:443"
-    environment:
-      GRAFANA_DOMAIN: ${GRAFANA_DOMAIN}
-    volumes:
-      - ./caddy/Caddyfile:/etc/caddy/Caddyfile:ro
-      - caddy-data:/data
-      - caddy-config:/config
-    depends_on:
-      - grafana
-    restart: unless-stopped
-
 volumes:
   prometheus-data:
   grafana-data:
-  caddy-data:
-  caddy-config:
