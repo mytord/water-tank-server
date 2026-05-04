@@ -24,6 +24,10 @@ services:
 
   prometheus:
     image: prom/prometheus:v2.55.1
+    command:
+      - --config.file=/etc/prometheus/prometheus.yml
+      - --storage.tsdb.retention.time=30d
+      - --storage.tsdb.retention.size=2GB
     ports:
       - "9090:9090"
     volumes:
