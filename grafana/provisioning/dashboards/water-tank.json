@@ -61,6 +61,7 @@
         "y": 4
       },
       "id": 1,
+      "interval": "1s",
       "options": {
         "orientation": "auto",
         "reduceOptions": {
@@ -127,6 +128,7 @@
         "y": 4
       },
       "id": 2,
+      "interval": "1s",
       "options": {
         "orientation": "auto",
         "reduceOptions": {
@@ -219,6 +221,7 @@
         "y": 12
       },
       "id": 3,
+      "interval": "1s",
       "options": {
         "legend": {
           "calcs": [
@@ -323,6 +326,7 @@
         "y": 12
       },
       "id": 4,
+      "interval": "1s",
       "options": {
         "legend": {
           "calcs": [
@@ -385,6 +389,7 @@
         "y": 0
       },
       "id": 5,
+      "interval": "1s",
       "options": {
         "colorMode": "none",
         "graphMode": "none",
@@ -449,6 +454,7 @@
         "y": 0
       },
       "id": 6,
+      "interval": "1s",
       "options": {
         "colorMode": "none",
         "graphMode": "none",
