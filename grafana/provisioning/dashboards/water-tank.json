@@ -98,15 +98,25 @@
       "fieldConfig": {
         "defaults": {
           "color": {
-            "mode": "palette-classic"
+            "mode": "thresholds"
           },
           "decimals": 3,
+          "max": 0.5,
+          "min": 0,
           "thresholds": {
             "mode": "absolute",
             "steps": [
               {
                 "color": "green",
                 "value": null
+              },
+              {
+                "color": "orange",
+                "value": 0.3
+              },
+              {
+                "color": "red",
+                "value": 0.45
               }
             ]
           },
@@ -122,11 +132,7 @@
       },
       "id": 2,
       "options": {
-        "colorMode": "value",
-        "graphMode": "area",
-        "justifyMode": "auto",
         "orientation": "auto",
-        "percentChangeColorMode": "standard",
         "reduceOptions": {
           "calcs": [
             "lastNotNull"
@@ -134,9 +140,8 @@
           "fields": "",
           "values": false
         },
-        "showPercentChange": false,
-        "textMode": "auto",
-        "wideLayout": true
+        "showThresholdLabels": false,
+        "showThresholdMarkers": true
       },
       "pluginVersion": "11.4.0",
       "targets": [
@@ -153,7 +158,7 @@
         }
       ],
       "title": "Current pressure",
-      "type": "stat"
+      "type": "gauge"
     },
     {
       "datasource": {
